@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Box,
   Input,
@@ -8,7 +10,7 @@ import {
   Button,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { SearchIcon, Search2Icon, PhoneIcon, ChatIcon } from "@chakra-ui/icons";
+import { SearchIcon, PhoneIcon, ChatIcon } from "@chakra-ui/icons";
 import { FaEllipsisV } from "react-icons/fa";
 
 const SearchBar = () => {
@@ -44,6 +46,22 @@ const SearchBar = () => {
 };
 
 const Body = () => {
+  const [records, setRecords] = useState([]);
+
+  //   const result = Array.from(records);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/v1/products")
+      .then((response) => {
+        console.log(response.data);
+        setRecords(response.data.data); // Update to setRecords(response.data.data)
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
   return (
     <Box marginTop="-540px">
       <span
@@ -102,69 +120,94 @@ const Body = () => {
         <span>Contact</span>
         <span style={{ marginRight: "40px" }}>Action</span>
       </Box>
-      <Box display="flex" flexDirection="column">
-        <img
-          src="./Ellipse 70.png"
-          alt="6"
-          style={{
-            marginLeft: "40px",
-            marginTop: "20px",
-            borderRadius: "50%",
-            width: "42px",
-            height: "42px",
-            objectFit: "cover",
-          }}
-        />
-        <span
-          style={{
-            color: "black",
-            fontFamily: "Gilroy, sans-serif",
-            fontSize: "16px",
-            marginTop: "-35px",
-            marginLeft: "100px",
-            fontWeight: "bold",
-          }}
-        >
-          John Tae
-        </span>
-        <span
-          style={{
-            color: "gray",
-            fontSize: "17px",
-            marginTop: "-27px",
-            marginLeft: "270px",
-          }}
-        >
-          Ikeja
-        </span>
-        <span
-          style={{
-            color: "green",
-            background: "#E6FDEE",
-            padding: "4px 8px",
-            borderRadius: "4px",
-            marginTop: "-27px",
-            marginLeft: "460px",
-            width: "85px",
-            height: "30px",
-          }}
-        >
-          Assigned
-        </span>
-        <span style={{ marginTop: "-27px", marginLeft: "700px" }}>
-          <PhoneIcon color="#070529" marginRight="20px" />
-          <ChatIcon color="#070529" />
-        </span>
-      </Box>
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="flex-end"
-        alignItems="flex-end"
-        marginRight="-170px"
-        marginTop="-19px"
-      >
-        <FaEllipsisV size={20} color="gray.500" style={{ cursor: "pointer" }} />
+      <Box display="flex" flexDirection="column" gap="10px">
+        {records.map((data, i) => (
+          <>
+            <img
+              src={data.image}
+              alt={data.name}
+              style={{
+                marginLeft: "40px",
+                marginTop: "20px",
+                borderRadius: "50%",
+                width: "42px",
+                height: "42px",
+                objectFit: "cover",
+              }}
+            />
+            <span
+              style={{
+                color: "black",
+                fontFamily: "Gilroy, sans-serif",
+                fontSize: "16px",
+                marginTop: "-50px",
+                marginLeft: "100px",
+                fontWeight: "bold",
+              }}
+            >
+              {data.name}
+            </span>
+
+            <span
+              style={{
+                color: "gray",
+                fontSize: "17px",
+                marginTop: "-37px",
+                marginLeft: "270px",
+              }}
+            >
+              {data.region}
+            </span>
+
+            <span
+              style={{
+                color: data.status === "assigned" ? "green" : "red",
+                background: data.status === "assigned" ? "#E6FDEE" : "#FFECEC",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                marginTop: "-30px",
+                marginLeft: "460px",
+                width: "90px",
+                height: "30px",
+              }}
+            >
+              {data.status}
+            </span>
+
+            <span
+              style={{
+                marginTop: "-20px",
+                marginLeft: "700px",
+              }}
+            >
+              <PhoneIcon color="#070529" marginRight="20px" />
+              <ChatIcon color="#070529" />
+            </span>
+
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="flex-end"
+              alignItems="flex-end"
+              marginRight="-170px"
+              marginTop="-40px"
+            >
+              <FaEllipsisV
+                size={20}
+                color="gray.500"
+                style={{ cursor: "pointer" }}
+              />
+            </Box>
+            <hr
+              style={{
+                maxWidth: "200%",
+                marginTop: "20px",
+                borderTop: "1px solid #e2e8f0",
+                width: "130%",
+              }}
+            />
+          </>
+        ))}
       </Box>
     </Box>
   );
