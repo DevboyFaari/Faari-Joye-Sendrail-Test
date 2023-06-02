@@ -13,6 +13,13 @@ import {
 import { SearchIcon, PhoneIcon, ChatIcon } from "@chakra-ui/icons";
 import { FaEllipsisV } from "react-icons/fa";
 
+interface Record {
+  image: string;
+  name: string;
+  region: string;
+  status: string;
+}
+
 const SearchBar = () => {
   const [isFocused, setIsFocused] = useState(false);
   const outlineColor = useColorModeValue("#F9C567", "gray.500");
@@ -46,16 +53,14 @@ const SearchBar = () => {
 };
 
 const Body = () => {
-  const [records, setRecords] = useState([]);
-
-  //   const result = Array.from(records);
+  const [records, setRecords] = useState<Record[]>([]);
 
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/v1/products")
       .then((response) => {
         console.log(response.data);
-        setRecords(response.data.data); // Update to setRecords(response.data.data)
+        setRecords(response.data.data);
       })
       .catch((error) => {
         console.error(error);
@@ -121,8 +126,8 @@ const Body = () => {
         <span style={{ marginRight: "40px" }}>Action</span>
       </Box>
       <Box display="flex" flexDirection="column" gap="10px">
-        {records.map((data, i) => (
-          <>
+        {records.map((data: Record, i: number) => (
+          <React.Fragment key={i}>
             <img
               src={data.image}
               alt={data.name}
@@ -206,7 +211,7 @@ const Body = () => {
                 width: "130%",
               }}
             />
-          </>
+          </React.Fragment>
         ))}
       </Box>
     </Box>
